@@ -1,0 +1,57 @@
+extends layout
+
+block content
+  .container
+    #entername.row
+      .col-md-4.col-sm-4
+        form.form-inline
+          .form-group
+            label What is your name?
+            br
+            input#username.form-control(type='text')
+            p.text-danger.hide(id='noname') What should we call you?
+          br
+          br
+          div
+            button#start.btn.btn-success.btn-md(type='button')
+              span.glyphicon.glyphicon-user
+              |  Start Chat
+
+    #chatroom.row.hide
+      #chat.col-md-9
+        #users.col-md-2.bg-warning
+        #message.col-md-7
+      #action.col-md-3
+        textarea#text.form-control(type='text')
+        button#btn-message-save.btn.btn-primary.pull-right Send
+
+  script(type='text/template', id='tmpl-users')
+    .container
+      h5 Users on chat
+      ul#userlist
+        <% _.each(users, function(user){ %>
+        li
+          h5 <%= user %>
+        <% }); %>
+
+  script(type='text/template', id='tmpl-message')
+    .container
+      ul.list-unstyled
+        li
+          p
+            small.text-muted
+              i.glyphicon.glyphicon-time <%= message.today %>
+        <% _.each(data, function(message) { %>
+        li
+          ul.list-inline
+            li
+              h5 <%= message.user %>
+            li
+              p <%= message.message %>
+            li
+              p
+                small.text-muted <%= message.timestamp %>
+        <% }); %>
+
+  link(rel='stylesheet', href='stylesheets/timeline.css')
+  script(type='text/javascript', src='javascripts/chat-app.js')
