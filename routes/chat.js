@@ -31,7 +31,7 @@ router.post('/users/:user', function(req, res, next){
 			workflow.emit('response');
 		}
 
-		workflow.emit('boradcast');
+		workflow.emit('boardcast');
 	});
 
 	workflow.on('boardcast', function(){
@@ -41,10 +41,10 @@ router.post('/users/:user', function(req, res, next){
 		workflow.outcome.user = user;
 		users.push(user);
 
-		clients.forEach(function(client){
+/*		clients.forEach(function(client){
 			clients.sendUTF(JSON.stringify(users));
 		});
-
+*/
 		workflow.emit('response');
 	});
 
@@ -109,6 +109,7 @@ router.post('/send/:user/:message', function(req, res, next){
 		
 		workflow.outcome.success = true;
 
+		obj.user = user;
 		obj.message = msg;
 		obj.timestamp = milliseconds;
 		history.unshift(obj);

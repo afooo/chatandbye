@@ -8,10 +8,12 @@ var app = app || {};
  **/
 app.Users = Backbone.Model.extend({
 	url: function(){
-		return 'http://localhost:3000/chat/users/' + this.get('user');
+		return 'http://localhost:3000/chat/users'
+			+ (this.user = '' ? '' : '/' + this.user);
 	},
+	user: '',
 	defaults: {
-		user: ''
+		users: []
 	}
 });
 
@@ -71,8 +73,8 @@ app.LoginView = Backbone.View.extend({
 app.MessageView = Backbone.View.extend({
 	el: '#chat',
 	initialize: function(){
-		this.model = new app.Message();
-		this.usersModel = new app.Users();
+		this.model = app.Message();
+		//this.usersModel = new app.Users();
 		this.model.today = new Date();
 		this.model.on('change', this.render, this);  // ViewModel
 
@@ -93,6 +95,7 @@ app.MessageView = Backbone.View.extend({
 		var self = this;
 
 		function onWsMessage(message){
+			var users = JSON.parse(message.users);
 			var json = JSON.parse(message.data);
 			console.log(message);
 
@@ -138,7 +141,6 @@ app.ActionView = Backbone.View.extend({
 // 等候HTML文件完成載入
 $(document).ready(function(){
 	app.loginView = new app.LoginView();
-	app.userView = new app.UserView();
 	app.messageView = new app.MessageView();
 	app.actionView = new app.ActionView();
 });
