@@ -9,9 +9,10 @@ var app = app || {};
 app.Users = Backbone.Model.extend({
 	url: function(){
 		return 'http://localhost:3000/chat/users'
-			+ (this.user = '' ? '' : '/' + this.user);
+//		return 'http://chatandbye.com:3000/chat/users'
+			+ (this.user = null ? null : '/' + this.user);
 	},
-	user: '', // '/username'
+	user: null, // '/username'
 	defaults: {
 		users: []
 	}
@@ -20,6 +21,7 @@ app.Users = Backbone.Model.extend({
 app.Message = Backbone.Model.extend({
 	url: function(){
 		return 'http://localhost:3000/chat/start';
+//		return 'http://chatandbye.com:3000/chat/start';
 	},
 	defaults: {
 		today: '',
@@ -31,6 +33,7 @@ app.SubmitMessage = Backbone.Model.extend({
 	//data source
 	url: function(){
 		return 'http://localhost:3000/chat/send' + this.get('user')
+//		return 'http://chatandbye.com:3000/chat/send' + this.get('user')
 			+ '/' + this.get('message');
 	},
 	defaults: {
@@ -114,6 +117,7 @@ app.MessageView = Backbone.View.extend({
 
 		// Let us open a web socket
 		var ws = new WebSocket('ws://localhost:3000/chat/start', ['echo-protocol']);
+//		var ws = new WebSocket('ws://chatandbye.com:3000/chat/start', ['echo-protocol']);
 		//var ws2 = new WebSocket('ws://localhost:3000/chat/user', ['echo-protocol']);
 
 		ws.onopen = function(){
