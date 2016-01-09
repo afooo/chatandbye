@@ -108,6 +108,8 @@ router.post('/send/:user/:message', function(req, res, next){
 		console.log('Ready to broadcast "' + msg + '"');
 		
 		workflow.outcome.success = true;
+		workflow.outcome.message.user = user;
+		workflow.outcome.message.data = msg;
 
 		obj.user = user;
 		obj.message = msg;

@@ -11,7 +11,7 @@ app.Users = Backbone.Model.extend({
 		return 'http://localhost:3000/chat/users'
 			+ (this.user = '' ? '' : '/' + this.user);
 	},
-	user: '',
+	user: '', // '/username'
 	defaults: {
 		users: []
 	}
@@ -23,7 +23,6 @@ app.Message = Backbone.Model.extend({
 	},
 	defaults: {
 		today: '',
-		users: [],
 		data: []
 	}
 });
@@ -31,9 +30,11 @@ app.Message = Backbone.Model.extend({
 app.SubmitMessage = Backbone.Model.extend({
 	//data source
 	url: function(){
-		return 'http://localhost:3000/chat/send/' + this.get('message');
+		return 'http://localhost:3000/chat/send' + this.get('user')
+			+ '/' + this.get('message');
 	},
 	defaults: {
+		user: '',
 		message: ''
 	}
 });
@@ -60,7 +61,9 @@ app.LoginView = Backbone.View.extend({
 		if(username) {
 			//save user to server
 			this.model.user = username;
+			console.log(this.model.user);
 			this.model.save();
+			console.log(this.model.user);
 			//change view
 			this.$el.addClass('hide');
 			$('#chatroom').removeClass('hide');
@@ -73,13 +76,13 @@ app.LoginView = Backbone.View.extend({
 app.MessageView = Backbone.View.extend({
 	el: '#chat',
 	initialize: function(){
-		this.model = app.Message();
-		//this.usersModel = new app.Users();
+		this.model = new app.Message();
+		this.usersModel = app.loginView.model;
 		this.model.today = new Date();
 		this.model.on('change', this.render, this);  // ViewModel
 
 		this.template = _.template($('#tmpl-message').html());
-		this.usersTemplate = _.template($('#tmpl-message').html());
+		this.usersTemplate = _.template($('#tmpl-users').html());
 
 		this.createWebSocket();
 		this.usersModel.fetch();
@@ -93,11 +96,15 @@ app.MessageView = Backbone.View.extend({
 	createWebSocket: function(){
 		var div = this.$el.find('#message');
 		var self = this;
-
-		function onWsMessage(message){
+/*
+		function onWsUsers(users){
 			var users = JSON.parse(message.users);
-			var json = JSON.parse(message.data);
 			console.log(message);
+
+		}
+*/
+		function onWsMessage(message){
+			var json = JSON.parse(message.data);
 
 			if(message.type === 'message'){
 				self.model.set('data', json.data);  // model state is changed
@@ -107,10 +114,12 @@ app.MessageView = Backbone.View.extend({
 
 		// Let us open a web socket
 		var ws = new WebSocket('ws://localhost:3000/chat/start', ['echo-protocol']);
+		//var ws2 = new WebSocket('ws://localhost:3000/chat/user', ['echo-protocol']);
+
 		ws.onopen = function(){
 			div.append('<h5>Chat now</h5>');
 		};
-		
+
 		ws.onmessage = onWsMessage;
 
 		ws.onclose = function(){
@@ -119,6 +128,20 @@ app.MessageView = Backbone.View.extend({
 		ws.onerror = function(){
 			div.html('<h2>Error</h2>');
 		};
+/*
+		ws2.onopen = function(){
+			div.append('<h5>Chat now</h5>');
+		};
+
+		ws2.onusers = onWsUsers;
+
+		ws2.onclose = function(){
+			div.append('<h5>Bye</h5>');
+		};
+		ws2.onerror = function(){
+			div.html('<h2>Error</h2>');
+		};
+		*/
 	}
 });
 
@@ -132,8 +155,10 @@ app.ActionView = Backbone.View.extend({
 	},
 	save: function(evt){
 		var text = this.$el.find('#text').val();
+		var user = app.loginView.model.user; // '/username'
 
 		this.model.set('message', text);
+		this.model.set('user', user);
 		this.model.save();
 	}
 });
