@@ -18,14 +18,7 @@ app.User = Backbone.Model.extend({
 app.Users = Backbone.Model.extend({
 	url: function(){
 		return 'http://localhost:3000/chat/users'
-<<<<<<< HEAD
-//		return 'http://chatandbye.com:3000/chat/users'
-			+ (this.user = null ? null : '/' + this.user);
 	},
-	user: null, // '/username'
-=======
-	},
->>>>>>> userlist
 	defaults: {
 		users: []
 	}
@@ -45,12 +38,7 @@ app.Message = Backbone.Model.extend({
 app.SubmitMessage = Backbone.Model.extend({
 	//data source
 	url: function(){
-<<<<<<< HEAD
-		return 'http://localhost:3000/chat/send' + this.get('user')
-//		return 'http://chatandbye.com:3000/chat/send' + this.get('user')
-=======
 		return 'http://localhost:3000/chat/send/' + this.get('user')
->>>>>>> userlist
 			+ '/' + this.get('message');
 	},
 	defaults: {
