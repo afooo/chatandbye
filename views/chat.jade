@@ -28,10 +28,10 @@ block content
   script(type='text/template', id='tmpl-users')
     .container
       h5 Users on chat
-      ul#userlist
+      ul.list-unstyled
         <% _.each(users, function(user){ %>
         li
-          h5 <%= user %>
+          p <%= user.user %>
         <% }); %>
 
   script(type='text/template', id='tmpl-message')
@@ -40,7 +40,7 @@ block content
         li
           p
             small.text-muted
-              i.glyphicon.glyphicon-time <%= message.today %>
+              i.glyphicon.glyphicon-time <%= today %>
         <% _.each(data, function(message) { %>
         li
           ul.list-inline

@@ -11,13 +11,23 @@ router.get('/', function(req, res, next){
 });
 
 router.get('/users', function(req, res, next){
-	res.send(users);
+	var workflow = new events.EventEmitter();
+
+	workflow.outcome = {
+		success: false,
+		errfor: {},
+		list: {}
+	};	
+
+	workflow.outcome.list.users = users;
+	console.log(workflow.outcome.list);
+	res.send(workflow.outcome.list);
 });
 
 router.post('/users/:user', function(req, res, next){
 	var workflow = new events.EventEmitter(),
-		clients = req.app.clients;
-		user = req.params.user;
+		user = req.params.user
+		obj = {};
 
 	workflow.outcome = {
 		success: false,
@@ -31,20 +41,18 @@ router.post('/users/:user', function(req, res, next){
 			workflow.emit('response');
 		}
 
-		workflow.emit('boardcast');
+		workflow.emit('adduser');
 	});
 
-	workflow.on('boardcast', function(){
+	workflow.on('adduser', function(){
 		console.log(req.params.user + ' is coming in!');
 
 		workflow.outcome.success = true;
 		workflow.outcome.user = user;
-		users.push(user);
 
-/*		clients.forEach(function(client){
-			clients.sendUTF(JSON.stringify(users));
-		});
-*/
+		obj.user = user;
+		users.push(obj);
+
 		workflow.emit('response');
 	});
 
@@ -74,7 +82,7 @@ router.get('/start', function(req, res, next) {
   });
 
   workflow.on('response', function() {
-//    console.log(workflow.outcome.message);
+    console.log(workflow.outcome.message);
     res.send(workflow.outcome.message);
   });
   

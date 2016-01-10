@@ -6,13 +6,26 @@ var app = app || {};
 /**
  * MODELS
  **/
+app.User = Backbone.Model.extend({
+	url: function(){
+		return 'http://localhost:3000/chat/users/' + this.get('user');
+	},
+	defaults: {
+		user: ''
+	}
+});
+
 app.Users = Backbone.Model.extend({
 	url: function(){
 		return 'http://localhost:3000/chat/users'
+<<<<<<< HEAD
 //		return 'http://chatandbye.com:3000/chat/users'
 			+ (this.user = null ? null : '/' + this.user);
 	},
 	user: null, // '/username'
+=======
+	},
+>>>>>>> userlist
 	defaults: {
 		users: []
 	}
@@ -32,8 +45,12 @@ app.Message = Backbone.Model.extend({
 app.SubmitMessage = Backbone.Model.extend({
 	//data source
 	url: function(){
+<<<<<<< HEAD
 		return 'http://localhost:3000/chat/send' + this.get('user')
 //		return 'http://chatandbye.com:3000/chat/send' + this.get('user')
+=======
+		return 'http://localhost:3000/chat/send/' + this.get('user')
+>>>>>>> userlist
 			+ '/' + this.get('message');
 	},
 	defaults: {
@@ -51,7 +68,7 @@ app.LoginView = Backbone.View.extend({
 		'click #start': 'start'
 	},
 	initialize: function(){
-		this.model = new app.Users();
+		this.model = new app.User();
 		this.render();
 	},
 	render: function(){
@@ -63,10 +80,8 @@ app.LoginView = Backbone.View.extend({
 
 		if(username) {
 			//save user to server
-			this.model.user = username;
-			console.log(this.model.user);
+			this.model.attributes.user = username;
 			this.model.save();
-			console.log(this.model.user);
 			//change view
 			this.$el.addClass('hide');
 			$('#chatroom').removeClass('hide');
@@ -80,9 +95,11 @@ app.MessageView = Backbone.View.extend({
 	el: '#chat',
 	initialize: function(){
 		this.model = new app.Message();
-		this.usersModel = app.loginView.model;
+		this.usersModel = new app.Users();
 		this.model.today = new Date();
-		this.model.on('change', this.render, this);  // ViewModel
+
+		this.model.on('change', this.render, this);
+		this.usersModel.on('change', this.render, this);
 
 		this.template = _.template($('#tmpl-message').html());
 		this.usersTemplate = _.template($('#tmpl-users').html());
@@ -112,6 +129,9 @@ app.MessageView = Backbone.View.extend({
 			if(message.type === 'message'){
 				self.model.set('data', json.data);  // model state is changed
 				self.model.fetch();
+				self.usersModel.fetch();
+				console.log(self.model.attributes);
+				console.log(self.usersModel.attributes);
 			}
 		}
 
@@ -159,7 +179,7 @@ app.ActionView = Backbone.View.extend({
 	},
 	save: function(evt){
 		var text = this.$el.find('#text').val();
-		var user = app.loginView.model.user; // '/username'
+		var user = app.loginView.model.attributes.user;
 
 		this.model.set('message', text);
 		this.model.set('user', user);
