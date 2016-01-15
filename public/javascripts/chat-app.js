@@ -1,14 +1,16 @@
 /**
  * SETUP
  **/
-var app = app || {};
+var app = app || {},
+	webHost = '://localhost:3000';
+//	webHost = '://chatandbye.com';
 
 /**
  * MODELS
  **/
 app.User = Backbone.Model.extend({
 	url: function(){
-		return 'http://localhost:3000/chat/users/' + this.get('user');
+		return 'http'+ webHost  +'/chat/users/'+ this.get('user');
 	},
 	defaults: {
 		user: ''
@@ -17,7 +19,7 @@ app.User = Backbone.Model.extend({
 
 app.Users = Backbone.Model.extend({
 	url: function(){
-		return 'http://localhost:3000/chat/users'
+		return 'http'+ webHost +'/chat/users';
 	},
 	defaults: {
 		users: []
@@ -26,8 +28,7 @@ app.Users = Backbone.Model.extend({
 
 app.Message = Backbone.Model.extend({
 	url: function(){
-		return 'http://localhost:3000/chat/start';
-//		return 'http://chatandbye.com:3000/chat/start';
+		return 'http'+ webHost +'/chat/start';
 	},
 	defaults: {
 		today: '',
@@ -36,9 +37,8 @@ app.Message = Backbone.Model.extend({
 });
 
 app.SubmitMessage = Backbone.Model.extend({
-	//data source
 	url: function(){
-		return 'http://localhost:3000/chat/send/' + this.get('user')
+		return 'http'+ webHost +'/chat/send/'+ this.get('user')
 			+ '/' + this.get('message');
 	},
 	defaults: {
@@ -124,9 +124,8 @@ app.MessageView = Backbone.View.extend({
 		}
 
 		// Let us open a web socket
-		var ws = new WebSocket('ws://localhost:3000/chat/start', ['echo-protocol']);
-//		var ws = new WebSocket('ws://chatandbye.com:3000/chat/start', ['echo-protocol']);
-		//var ws2 = new WebSocket('ws://localhost:3000/chat/user', ['echo-protocol']);
+		var ws = new WebSocket('ws'+ webHost +'/chat/start', ['echo-protocol']);
+		//var ws2 = new WebSocket('ws'+ webHost +'/chat/user', ['echo-protocol']);
 
 		ws.onopen = function(){
 			div.append('<h5>Chat now</h5>');
