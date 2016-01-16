@@ -1,0 +1,63 @@
+extends layout
+
+block content
+  .row
+    .col-md-4.col-sm-4
+      h2 To Learn list
+      div#tolearnlist
+    .col-md-8.col-sm-8
+      br
+      div#lessoninfo
+
+  script(type='text/template', id='tmpl-tolearnlist')
+    button.btn.btn-xs.btn-info.btn-add Add
+    = ' '
+    button.btn.btn-xs.btn-danger.btn-delete Delete
+    br
+    br
+    <% _.each(lessons, function(lesson){ %>
+    p
+      a(href='#', id='lesson', data-id!='<%= lesson._id %>') <%= lesson.lessonName %>
+      = ' '
+      span.glyphicon.glyphicon-remove.hide(name='delete', data-id!='<%= lesson._id %>')
+    <% }); %>
+  
+  script(type='text/template', id='tmpl-lessonlearn')
+    div.well.non-editable
+      .row
+        h3(id!='<%= lesson._id %>') <%= lesson.lessonName %>
+        h6
+          small created on
+          i  <%= lesson.timeCreated %>
+        p url:
+          a(href!='<%= lesson.lessonUrl %>')  <%= lesson.lessonUrl %>
+        p <%= lesson.lessonLearn %>
+        button.btn.btn-xs.btn-info.btn-edit Edit
+
+    div.well.editable.hide
+      .row
+        form
+        .alerts
+          input.hide(name='id', value!='<%= lesson._id %>')
+          .control-group
+            label.control-label Lesson
+            p.form-control-static.text-muted.hide(name='name-static', value!='<%= lesson.lessonName %>') <%= lesson.lessonName %>
+            .controls
+              input.form-control(type='text', name='lessonname', value!='<%= lesson.lessonName %>')
+          .control-group
+            label.control-label URL
+            .controls
+              input.form-control(type='text', name='lessonurl', value!='<%= lesson.lessonUrl %>')
+          br
+          .control-group
+            label.control-label Briefing
+            .controls
+              textarea.form-control(type='text', name='lessonlearn') <%= lesson.lessonLearn %>
+          br
+          div
+            button.btn.btn-md.btn-info.btn-save('type=button') Save
+            | 
+            button.btn.btn-md.btn-cancel('type=button') Cancel
+            
+  script(src='javascripts/tolearn.js', type='text/javascript')
+  
