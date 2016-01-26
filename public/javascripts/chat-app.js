@@ -81,10 +81,12 @@ app.LoginView = Backbone.View.extend({
 
 app.MessageView = Backbone.View.extend({
 	el: '#chat',
+	webHost: '',
 	initialize: function(){
 		this.model = new app.Message();
 		this.usersModel = new app.Users();
 		this.model.today = new Date();
+		this.webHost = '://' + this.$el.data('host');
 
 		this.model.on('change', this.render, this);
 		this.usersModel.on('change', this.render, this);
@@ -124,8 +126,7 @@ app.MessageView = Backbone.View.extend({
 		}
 
 		// Let us open a web socket
-		var ws = new WebSocket('ws'+ webHost +'/chat/start', ['echo-protocol']);
-		//var ws2 = new WebSocket('ws'+ webHost +'/chat/user', ['echo-protocol']);
+		var ws = new WebSocket('ws'+ this.webHost +'/chat/start', ['echo-protocol']);
 
 		ws.onopen = function(){
 			div.append('<h5>Chat now</h5>');
