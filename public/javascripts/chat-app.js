@@ -1,16 +1,14 @@
 /**
  * SETUP
  **/
-var app = app || {},
-	webHost = '://localhost:3000';
-//	webHost = '://chatandbye.com';
+var app = app || {};
 
 /**
  * MODELS
  **/
 app.User = Backbone.Model.extend({
 	url: function(){
-		return 'http'+ webHost  +'/chat/users/'+ this.get('user');
+		return '/chat/users/'+ this.get('user');
 	},
 	defaults: {
 		user: ''
@@ -19,7 +17,7 @@ app.User = Backbone.Model.extend({
 
 app.Users = Backbone.Model.extend({
 	url: function(){
-		return 'http'+ webHost +'/chat/users';
+		return '/chat/users';
 	},
 	defaults: {
 		users: []
@@ -28,7 +26,7 @@ app.Users = Backbone.Model.extend({
 
 app.Message = Backbone.Model.extend({
 	url: function(){
-		return 'http'+ webHost +'/chat/start';
+		return '/chat/start';
 	},
 	defaults: {
 		today: '',
@@ -38,7 +36,7 @@ app.Message = Backbone.Model.extend({
 
 app.SubmitMessage = Backbone.Model.extend({
 	url: function(){
-		return 'http'+ webHost +'/chat/send/'+ this.get('user')
+		return '/chat/send/'+ this.get('user')
 			+ '/' + this.get('message');
 	},
 	defaults: {
@@ -86,7 +84,7 @@ app.MessageView = Backbone.View.extend({
 		this.model = new app.Message();
 		this.usersModel = new app.Users();
 		this.model.today = new Date();
-		this.webHost = '://' + this.$el.data('host');
+		this.webHost = this.$el.data('host');
 
 		this.model.on('change', this.render, this);
 		this.usersModel.on('change', this.render, this);
@@ -106,13 +104,7 @@ app.MessageView = Backbone.View.extend({
 	createWebSocket: function(){
 		var div = this.$el.find('#message');
 		var self = this;
-/*
-		function onWsUsers(users){
-			var users = JSON.parse(message.users);
-			console.log(message);
 
-		}
-*/
 		function onWsMessage(message){
 			var json = JSON.parse(message.data);
 
@@ -126,7 +118,7 @@ app.MessageView = Backbone.View.extend({
 		}
 
 		// Let us open a web socket
-		var ws = new WebSocket('ws'+ this.webHost +'/chat/start', ['echo-protocol']);
+		var ws = new WebSocket('ws://'+ this.webHost +'/chat/start', ['echo-protocol']);
 
 		ws.onopen = function(){
 			div.append('<h5>Chat now</h5>');
@@ -140,20 +132,6 @@ app.MessageView = Backbone.View.extend({
 		ws.onerror = function(){
 			div.html('<h2>Error</h2>');
 		};
-/*
-		ws2.onopen = function(){
-			div.append('<h5>Chat now</h5>');
-		};
-
-		ws2.onusers = onWsUsers;
-
-		ws2.onclose = function(){
-			div.append('<h5>Bye</h5>');
-		};
-		ws2.onerror = function(){
-			div.html('<h2>Error</h2>');
-		};
-		*/
 	}
 });
 
