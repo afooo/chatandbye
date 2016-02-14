@@ -7,7 +7,7 @@ var events = require('events'),
 	history = [];
 
 router.get('/', function(req, res, next){
-	res.render('chat');
+	res.render('chat', { serverHost: req.headers.host });
 });
 
 router.get('/users', function(req, res, next){
